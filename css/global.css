@@ -621,3 +621,36 @@ h1, h2, h3, h4 {
     max-width: 360px;
   }
 }
+
+/* Trust section */
+.trust-strip {
+  background: #fafafa;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+.trust-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #444;
+  gap: 10px;
+}
+
+.trust-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.9;
+}
