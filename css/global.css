@@ -1,0 +1,623 @@
+ * {
+     box-sizing: border-box;
+     margin: 0;
+     padding: 0;
+ }
+
+ body {
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+     line-height: 1.6;
+     color: #222;
+     background: #cccccc;
+ }
+
+ img, video {
+     max-width: 100%;
+     height: auto;
+     display: block;
+ }
+
+ .container {
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 30px;
+ }
+
+ section {
+     padding: 48px 0;
+ }
+
+h1, h2, h3, h4 {
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+ h1 {
+     font-size: 2rem;
+ }
+
+ h2 {
+     font-size: 1.5rem;
+ }
+
+ p {
+     margin-bottom: 16px;
+ }
+
+ ul {
+     margin-bottom: 16px;
+     padding-left: 20px;
+ }
+ strong {
+     font-weight: 500;
+ }
+ .cta-btn {
+    display: block;
+    background: linear-gradient(180deg, #38c84a, #1e8f2c);
+    color: #fff;
+    text-decoration: none;
+    padding: 16px 28px;
+    border-radius: 12px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+    width: fit-content;
+    -webkit-width: -webkit-fit-content;
+    margin: 24px auto 8px;
+ }
+
+ .microcopy {
+     font-size: 0.85rem;
+     color: #444;
+     text-align: left;
+ }
+
+ .video-thumb {
+     width: 300px;
+     height: 300px;
+     border-radius: 20px;
+     overflow: hidden;
+     position: relative;
+     margin: 24px auto;
+ }
+
+/* Hero white bar: paragraph should cover 3/4 of the page */
+.hero-white-bar p {
+    width: 75%;
+    max-width: 75%;
+    margin: 16px auto;
+    text-align: left;
+}
+
+@media (max-width: 600px) {
+    .hero-white-bar p {
+        width: 100%;
+        max-width: 100%;
+        margin: 12px 16px;
+    }
+}
+
+ .video-thumb button {
+     border: none;
+     background: none;
+     cursor: pointer;
+     width: 100%;
+     height: 100%;
+     position: relative;
+ }
+
+ .video-thumb .play-btn {
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     width: 80px;
+     height: 80px;
+     background: rgba(255, 255, 255, 0.75);
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .video-thumb .play-btn::before {
+     content: '';
+     width: 0;
+     height: 0;
+     border-top: 18px solid transparent;
+     border-bottom: 18px solid transparent;
+     border-left: 28px solid #fff;
+     margin-left: 6px;
+ }
+
+ .steps {
+     display: flex;
+     gap: 3rem;
+     justify-content: center;
+     flex-wrap: wrap;
+     padding: 2rem 0 0 0;
+ }
+
+ .step-box {
+     background: #eee;
+     border-radius: 16px;
+     padding: 32px;
+     flex: 1 1 200px;
+     max-width: 300px;
+     text-align: center;
+ }
+
+ .faq-item {
+     margin-bottom: 24px;
+ }
+/* Footer styles */
+.site-footer {
+  background: #555;          /* or #222 / #444 depending on your theme */
+  color: #fff;
+  padding: 32px 0;
+  margin-top: 48px;
+  font-size: 0.9rem;
+}
+
+.site-footer .container {
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 4px 0;
+}
+
+.site-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-footer a:hover,
+.site-footer a:focus {
+  text-decoration: underline;
+}
+
+.site-footer .microcopy {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .site-footer p {
+    font-size: 0.85rem;
+  }
+}
+
+ footer {
+     background: #555;
+     color: #fff;
+     padding: 32px;
+     text-align: center;
+     margin-top: 48px;
+ }
+
+ @media (max-width: 600px) {
+     h1 {
+         font-size: 1.6rem;
+     }
+
+     h2 {
+         font-size: 1.3rem;
+     }
+
+     section {
+         padding: 32px 0;
+     }
+
+     .step-box {
+         max-width: unset;
+     }
+ }
+
+  /* Mobile: reduce gap between steps for narrow viewports */
+  @media (max-width: 600px) {
+    .steps {
+      gap: 1rem;
+      padding: 1rem 0 0 0;
+    }
+  }
+
+/* Make site-wrapper full-width on small screens */
+@media (max-width: 600px) {
+    .site-wrapper {
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+ /* Header styles */
+ .header-bg {
+     padding: 0px 0 10px;
+     background: linear-gradient(to bottom,
+             #A63A36 0%,
+             #8A2F2C 45%,
+             #622524 100%);
+     color: #F7E8C6;
+     text-align: center;
+ }
+
+/* Page width wrapper for main content */
+.site-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #ffffff;
+}
+
+ .logo {
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    margin-bottom: 0px;
+ }
+
+ .logo-icon {
+     margin: 0 auto;
+ }
+
+ .tagline {
+     font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+     font-size: 1.125rem;
+     letter-spacing: 0.5px;
+     margin-top: 12px;
+     color:#ffffff;
+ }
+
+ /* Hero */
+ /* HERO WRAPPER */
+.hero {
+  background: url("../image/heroBG.jpg") center/cover no-repeat;
+  padding: 20px 0 20px;
+  position: relative;
+  color: #fff;
+}
+
+/* WIDTH CONTROL */
+.hero-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 0px;
+  position: relative;
+}
+.hero-top-text {
+  margin-bottom: 3rem;
+}
+
+/* HEADLINES */
+.hero-top-text h1 {
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 600;
+  color: #f7d8a3;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.hero-top-text h2 {
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  text-align: center;
+    font-weight: 600;
+  color: #fff;
+}
+
+/* WHITE BAR — FULL WIDTH */
+.hero-white-bar {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 35px 40px;
+}
+
+.hero-white-bar p {
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(1.2rem, 2.3vw, 1.6rem);
+  color: #222;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* SANTA THUMBNAIL FLOATING ON RIGHT */
+.hero-thumb {
+  position: absolute;
+  right: 40px;           /* adjust to your screenshot */
+  top: 20.5rem;
+  transform: translateY(-50%);
+  width: 260px;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 28px;
+  box-shadow: 0px 8px 25px rgba(0,0,0,0.25);
+  z-index: 5;
+}
+
+/* Elf orientation two-column layout */
+.elf-row {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin: 18px 0 0;
+}
+
+.elf-thumb img {
+    height: 200px;
+    width: auto;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    object-fit: cover;
+}
+
+.elf-content {
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+@media (max-width: 850px) {
+    .elf-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .elf-content {
+        max-width: 100%;
+        padding: 0 16px;
+        text-align: center;
+    }
+
+    .elf-thumb img {
+        height: 200px;
+        width: auto;
+    }
+}
+
+  /* How-it-works card grid and icons */
+  .how-grid {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-top: 1.5rem;
+  }
+
+  .how-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .how-icon {
+    width: 500px;
+    height: 500px;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+  }
+
+  @media (max-width: 850px) {
+    .how-icon {
+      width: 500px;
+      height: 5%;
+    }
+    .how-grid {
+      gap: 1rem;
+    }
+  }
+
+/* Final CTA: center button and microcopy under it */
+.final-cta {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+}
+
+.final-cta .microcopy {
+        text-align: center;
+        max-width: 640px;
+}
+
+/* CTA BUTTON */
+.cta-container {
+  text-align: center;
+  padding: 20px;
+  align-items: center;
+}
+.cta {
+  display: block;
+  width: fit-content;
+  margin: 60px auto 0;
+  background: linear-gradient(180deg, #34d058, #168b2b);
+  padding: 22px 70px;
+  color: white;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  text-decoration: none;
+  line-height: 1.1;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.cta-sub {
+  display: block;
+  font-size: 14px;
+  font-weight: 400
+}
+
+/* MOBILE FIXES */
+@media(max-width: 850px) {
+  .hero-thumb {
+    position: static;
+    transform: none;
+    margin: 20px auto 0;
+    display: block;
+  }
+
+  .hero-white-bar {
+    text-align: center;
+  }
+}
+
+/* Video modal*/
+/* THUMBNAIL BUTTON */
+.video-trigger {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* MODAL BASE */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease-out;
+  z-index: 9999;
+}
+
+/* MODAL ACTIVE */
+.modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* CONTENT BOX */
+.modal-content {
+  position: relative;
+  max-width: 900px;
+  width: 90%;
+  background: #000;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+}
+
+/* CLOSE BUTTON */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  font-size: 2rem;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE VIDEO */
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* cards grid */
+
+/* Section spacing */
+.how-it-works {
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.how-it-works h2 {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.how-intro {
+  font-size: 1.25rem;
+  margin-bottom: 60px;
+  color: #444;
+}
+
+/* Grid */
+.how-grid {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Cards */
+.how-card {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 28px;
+  border: solid 1px #932728;
+  width: 320px;
+  box-shadow: 0 12px 40px rgba(151, 40, 41, 0.2), 0 0 60px rgba(151, 40, 41, 0.1);
+}
+
+
+
+/* Icon */
+.how-icon {
+  width: 150px;
+  height: 150px;
+  margin-bottom: 22px;
+  display: block;
+  object-fit: contain;
+}
+
+@media (max-width: 850px) {
+  .how-icon {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Headings inside cards */
+.how-card h3 {
+  margin-bottom: 14px;
+  font-size: 1.4rem;
+}
+
+/* Body copy */
+.how-card p {
+  font-size: 1.15rem;
+  line-height: 1.45;
+  color: #333;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .how-card {
+    width: 100%;
+    max-width: 360px;
+  }
+}
