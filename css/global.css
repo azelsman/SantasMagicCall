@@ -58,6 +58,7 @@ h1, h2, h3, h4 {
     text-decoration: none;
     padding: 16px 28px;
     border-radius: 12px;
+    border: 0px solid transparent;
     font-size: 1.3rem;
     font-weight: bold;
     text-align: center;
@@ -65,6 +66,77 @@ h1, h2, h3, h4 {
     -webkit-width: -webkit-fit-content;
     margin: 24px auto 8px;
  }
+
+/* Base Call Button */
+.call-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 28px;
+    border-radius: 12px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: fit-content;
+    margin: 24px auto 8px;
+    transition: all 0.3s ease;
+}
+
+/* Icon inside button */
+.call-btn .icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  /* Use SVG as a mask so we can fill it with CSS background-color (white) */
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: transparent; /* set by state rules below */
+}
+
+/* --- ACTIVE / UNLOCKED (GREEN) --- */
+.call-btn:not([disabled]) {
+    background: linear-gradient(180deg, #38c84a, #1e8f2c);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    color: #fff;
+}
+
+.call-btn:not([disabled]) .icon {
+  -webkit-mask-image: url("../image/Unlocked_icon.svg");
+  mask-image: url("../image/Unlocked_icon.svg");
+  background-color: #ffffff; /* filled white icon */
+}
+
+/* --- LOCKED / DISABLED (RED) --- */
+.call-btn[disabled],
+.call-btn.locked {
+    background: linear-gradient(180deg, #7B2325, #3B1012);
+    cursor: not-allowed !important;
+    box-shadow: none;
+    color: #fff;
+}
+
+.call-btn[disabled] .icon,
+.call-btn.locked .icon {
+  -webkit-mask-image: url("../image/Locked_icon.svg");
+  mask-image: url("../image/Locked_icon.svg");
+  background-color: #ffffff; /* filled white icon when locked */
+}
+
+/* Fallback for inline SVGs placed inside .icon */
+.call-btn .icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: #ffffff !important;
+}
+
 
  .microcopy {
      font-size: 0.85rem;
@@ -444,6 +516,15 @@ h1, h2, h3, h4 {
         max-width: 640px;
 }
 
+#startCallBtn.locked {
+  /* keep the locked button fully opaque */
+  cursor: not-allowed;
+}
+
+#startCallBtn.locked:hover {
+  transform: none; /* if you have hover effects */
+}
+
 /* CTA BUTTON */
 .cta-container {
   text-align: center;
@@ -662,4 +743,76 @@ h1, h2, h3, h4 {
   width: 20px;
   height: 20px;
   opacity: 0.9;
+}
+
+/* Magic Call Page */
+.vid-container {
+    display: flex;
+    justify-content: center;
+    margin: 24px 0;
+}
+#orientationVideo {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  border-radius: 2rem;
+  display: block;
+}
+
+.orientation-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+/* Make the orientation video responsive and provide mobile padding */
+.vid-container {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+  padding: 0 16px; /* small side padding for narrow screens */
+}
+
+@media (max-width: 600px) {
+  .vid-container {
+    padding: 0 12px;
+    margin: 16px 0;
+  }
+  #orientationVideo {
+    border-radius: 1rem;
+    max-width: 100%;
+  }
+}
+
+/* Messaging styles */
+.status-message {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    text-align: center;
+    display: none;
+}
+
+/* INFO 
+.status-message.info {
+    background: #eef7ff;
+    border: 1px solid #7db8ff;
+    color: #144b7e;
+}*/
+
+/* SUCCESS */
+.status-message.success {
+    background: #e9f8ed;
+    border: 1px solid #34a853;
+    color: #1c5f32;
+}
+
+/* ERROR */
+.status-message.error {
+    background: #fbeaea;
+    border: 1px solid #d9534f;
+    color: #b52b27;
 }

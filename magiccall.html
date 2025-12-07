@@ -36,25 +36,32 @@
     <header id="header" role="banner"></header>
 
   <!-- HERO SECTION -->
-   <!-- ORIENTATION TEST SECTION -->
-        <section class="elf-orientation-section">
-        <div class="elf-orientation-inner">
-            <h1>Elf Orientation Video (Test)</h1>
-            <p>Press play to confirm the <code>orientation.mp4</code> video loads and plays correctly.</p>
+  <!-- ORIENTATION + START CALL SECTION -->
+    <section class="container">
+        <div class="orientation-inner">
+        <h1>Santa's Magic Call – Elf Orientation</h1>
 
-            <video
-            id="orientationVideo"
-            class="elf-orientation-video"
-            controls
-            playsinline
-            preload="metadata"
-            >
-            <!-- TODO: update this path if needed -->
-            <source src="image/onboarding.mp4" type="video/mp4" />
+        <div class="vid-container"><video id="orientationVideo" class="" controls>
+            <source src="image/onboarding.mp4" type="video/mp4">
             Your browser does not support the video tag.
-            </video>
+        </video>
         </div>
-</section>
+
+        <div id="statusMessage" class="status-message" style="display: none;"></div>
+
+        <button id="startCallBtn" class="call-btn locked" disabled hidden>
+            <span class="icon"></span>
+            Start Santa’s Magic Call
+        </button>
+
+        <!-- Placeholder for the actual Santa call embed -->
+        <div id="callContainer" class="call-container" hidden>
+            <!-- TODO: Insert ElevenLabs / Santa call UI here -->
+            <p>Connecting you to Santa… ✨</p>
+        </div>
+        </div>
+    </section>
+
 
 
     <footer id="footer" class="site-footer"></footer>
