@@ -116,7 +116,7 @@ h1, h2, h3, h4 {
 /* --- LOCKED / DISABLED (RED) --- */
 .call-btn[disabled],
 .call-btn.locked {
-    background: linear-gradient(180deg, #7B2325, #3B1012);
+    background: linear-gradient(180deg, #ba363a 0%, #ba363a 40%, #731f24 100%);
     cursor: not-allowed !important;
     box-shadow: none;
     color: #fff;
