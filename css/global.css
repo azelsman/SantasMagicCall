@@ -127,6 +127,7 @@ h1, h2, h3, h4 {
   -webkit-mask-image: url("../image/Locked_icon.svg");
   mask-image: url("../image/Locked_icon.svg");
   background-color: #ffffff; /* filled white icon when locked */
+  opacity: 0.7;
 }
 
 /* Fallback for inline SVGs placed inside .icon */
