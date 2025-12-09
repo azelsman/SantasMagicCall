@@ -107,37 +107,32 @@ async function startSantaCallWithToken(token) {
 }
 
 // ------------------------------------------------------------
-// ElevenLabs widget injection helper
+// Inject ElevenLabs widget into callContainer
 // ------------------------------------------------------------
-function injectSantaWidget(container, token) {
+function injectSantaWidget(container) {
   if (!container) return;
 
-  // Ensure the ElevenLabs script is present (only add once)
-  if (!document.querySelector('script[data-elevenlabs-widget="true"]')) {
+  // Clear anything old in the call container
+  container.innerHTML = `
+    <section class="santa-call">
+      <h2 class="santa-call__title">Santa’s Magic Call</h2>
+      <p class="call-status">You’re now connected to Santa. 🎄</p>
+      <elevenlabs-convai
+        agent-id="agent_6801kajjbdqxe03vwpes80erj84f"
+        style="width:100%;max-width:480px;margin:0 auto;display:block;"
+      ></elevenlabs-convai>
+    </section>
+  `;
+
+  // Load the ElevenLabs widget script once
+  if (!document.getElementById("el-convai-script")) {
     const script = document.createElement("script");
+    script.id = "el-convai-script";
     script.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
     script.async = true;
     script.type = "text/javascript";
-    script.dataset.elevenlabsWidget = "true";
     document.body.appendChild(script);
   }
-
-  // Clear anything old in the call container
-  container.innerHTML = "";
-
-  // Create the widget element
-  const widget = document.createElement("elevenlabs-convai");
-  widget.setAttribute("agent-id", "agent_6801kajjbdqxe03vwpes80erj84f");
-
-  // (Optional) pass the token as metadata if you want later
-  // widget.setAttribute("data-token", token);
-
-  // Basic layout styling so it’s nicely centered
-  widget.style.display = "block";
-  widget.style.maxWidth = "480px";
-  widget.style.margin = "0 auto";
-
-  container.appendChild(widget);
 }
 
 // ------------------------------------------------------------
@@ -175,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // ------------------------------------------------------------
   // ORIENTATION PAGE — Token Validation + Video Gate
   // ------------------------------------------------------------
-
   const video = document.getElementById("orientationVideo");
   const startBtn = document.getElementById("startCallBtn");
   const callContainer = document.getElementById("callContainer");
@@ -200,8 +194,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ------------------------------------------------------------
-  // STEP 1 — Validate token ON PAGE LOAD
-  // ------------------------------------------------------------
+  // STEP 1 — Validate token ON PAGE LOAD (validator scenario)
+// ------------------------------------------------------------
   async function validateToken() {
     showStatus("info", "Checking your magic link…");
 
@@ -267,12 +261,26 @@ document.addEventListener("DOMContentLoaded", () => {
     showStatus("success", "Tap Start to begin your call with Santa.");
   }
 
-
   // ------------------------------------------------------------
   // STEP 3 — Start Santa Call (after validation + video)
-  // ------------------------------------------------------------
+// ------------------------------------------------------------
   startBtn.addEventListener("click", async () => {
-    // Disable and hide the button immediately to prevent repeated clicks
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (!token) {
+      showStatus(
+        "error",
+        "This magic link is missing a token. Please use the link from your email."
+      );
+      return;
+    }
+
+    // 1) Ask Make if we can start this call (and mark token in_progress)
+    const allowed = await startSantaCallWithToken(token);
+    if (!allowed) return; // bail if Make said no
+
+    // 2) UI behavior once we’re cleared to start
     startBtn.disabled = true;
     startBtn.classList.add("locked");
     startBtn.style.display = "none";
@@ -282,39 +290,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (callContainer) {
       callContainer.hidden = false;
-      callContainer.innerHTML = ""; // clear in case of retries
       callContainer.scrollIntoView({ behavior: "smooth" });
-    }
 
-    // 3A — Notify Make that the call is starting (optional but recommended)
-    try {
-      await fetch("https://hook.us2.make.com/tf22v739bg7r7c07kubak5ik3qiyrf88", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, event: "start_call" }),
-      });
-    } catch (err) {
-      console.warn("Start-call webhook failed (non-blocking):", err);
-    }
-
-    // 3B — Inject ElevenLabs widget into the page
-    if (callContainer) {
-      callContainer.innerHTML = `
-        <elevenlabs-convai
-          agent-id="agent_6801kajjbdqxe03vwpes80erj84f"
-          style="width:100%;max-width:480px;margin:0 auto;"
-        ></elevenlabs-convai>
-      `;
-    }
-
-    // 3C — Load the ElevenLabs widget script once
-    if (!document.querySelector('script[data-elevenlabs-convai]')) {
-      const s = document.createElement("script");
-      s.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
-      s.async = true;
-      s.type = "text/javascript";
-      s.dataset.elevenlabsConvai = "1";
-      document.body.appendChild(s);
+      // 3) Inject the ElevenLabs widget into the call container
+      injectSantaWidget(callContainer);
     }
   });
 });
