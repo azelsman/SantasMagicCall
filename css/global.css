@@ -119,7 +119,7 @@ h1, h2, h3, h4 {
     background: linear-gradient(180deg, #ba363a 0%, #ba363a 40%, #731f24 100%);
     cursor: not-allowed !important;
     box-shadow: none;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.8); /* text opacity */
 }
 
 .call-btn[disabled] .icon,
@@ -127,7 +127,7 @@ h1, h2, h3, h4 {
   -webkit-mask-image: url("../image/Locked_icon.svg");
   mask-image: url("../image/Locked_icon.svg");
   background-color: #ffffff; /* filled white icon when locked */
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 /* Fallback for inline SVGs placed inside .icon */

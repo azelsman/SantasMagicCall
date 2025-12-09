@@ -1,0 +1,7 @@
+fetch("https://hook.us2.make.com/https://hook.us2.make.com/tf22v739bg7r7c07kubak5ik3qiyrf88", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    token: "TEST_START_CALL"
+  })
+})

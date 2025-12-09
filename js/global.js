@@ -62,10 +62,88 @@ function clearStatus() {
 }
 
 // ------------------------------------------------------------
+// Start Call webhook helper (Make: SMC Start Call)
+// ------------------------------------------------------------
+async function startSantaCallWithToken(token) {
+  try {
+    const res = await fetch(
+      "https://hook.us2.make.com/tf22v739bg7r7c07kubak5ik3qiyrf88",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!data || data.ok !== true) {
+      const reason = data && data.reason ? data.reason : "unknown_error";
+
+      if (reason === "invalid_or_used_token") {
+        showStatus(
+          "error",
+          "This magic link is invalid or has already been used. Please check your email for a fresh link."
+        );
+      } else {
+        showStatus(
+          "error",
+          "We couldn’t start the call. Please try again using the link from your email."
+        );
+      }
+      return false;
+    }
+
+    // Token successfully moved to in_progress
+    return true;
+  } catch (err) {
+    console.error("Start call webhook failed:", err);
+    showStatus(
+      "error",
+      "We couldn’t start the call right now. Please refresh the page and try again."
+    );
+    return false;
+  }
+}
+
+// ------------------------------------------------------------
+// ElevenLabs widget injection helper
+// ------------------------------------------------------------
+function injectSantaWidget(container, token) {
+  if (!container) return;
+
+  // Ensure the ElevenLabs script is present (only add once)
+  if (!document.querySelector('script[data-elevenlabs-widget="true"]')) {
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
+    script.async = true;
+    script.type = "text/javascript";
+    script.dataset.elevenlabsWidget = "true";
+    document.body.appendChild(script);
+  }
+
+  // Clear anything old in the call container
+  container.innerHTML = "";
+
+  // Create the widget element
+  const widget = document.createElement("elevenlabs-convai");
+  widget.setAttribute("agent-id", "agent_6801kajjbdqxe03vwpes80erj84f");
+
+  // (Optional) pass the token as metadata if you want later
+  // widget.setAttribute("data-token", token);
+
+  // Basic layout styling so it’s nicely centered
+  widget.style.display = "block";
+  widget.style.maxWidth = "480px";
+  widget.style.margin = "0 auto";
+
+  container.appendChild(widget);
+}
+
+// ------------------------------------------------------------
 // DOMContentLoaded — Everything runs from here
 // ------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-
   // ------------------------------------------------------------
   // LANDING PAGE — Video Modal Logic
   // ------------------------------------------------------------
@@ -114,7 +192,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Missing token
   if (!token) {
-    showStatus("error", "This link is missing a magic token. Please use the link from your email.");
+    showStatus(
+      "error",
+      "This link is missing a magic token. Please use the link from your email."
+    );
     return;
   }
 
@@ -125,30 +206,41 @@ document.addEventListener("DOMContentLoaded", () => {
     showStatus("info", "Checking your magic link…");
 
     try {
-      const res = await fetch("https://hook.us2.make.com/wc51b2mt1c6we2y2eedqwi3nrntnmm97", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      });
+      const res = await fetch(
+        "https://hook.us2.make.com/wc51b2mt1c6we2y2eedqwi3nrntnmm97",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token })
+        }
+      );
 
       const data = await res.json();
 
       if (!data.ok) {
-        showStatus("error", "This magic link is invalid or has already been used.");
+        showStatus(
+          "error",
+          "This magic link is invalid or has already been used."
+        );
         return;
       }
 
       // Token is valid
       clearStatus();
-      showStatus("info", "Watch the Elf Orientation to unlock your Start Call button.");
+      showStatus(
+        "info",
+        "Watch the Elf Orientation to unlock your Start Call button."
+      );
 
       startBtn.hidden = false;
       startBtn.disabled = true;
       startBtn.classList.add("locked");
-
     } catch (err) {
       console.error("Token validation failed:", err);
-      showStatus("error", "We couldn't verify your magic link. Please try again.");
+      showStatus(
+        "error",
+        "We couldn't verify your magic link. Please try again."
+      );
     }
   }
 
@@ -162,7 +254,10 @@ document.addEventListener("DOMContentLoaded", () => {
       clearStatus();
       startBtn.disabled = false;
       startBtn.classList.remove("locked");
-      showStatus("success", "You’re ready! Tap Start to begin your call with Santa.");
+      showStatus(
+        "success",
+        "You’re ready! Tap Start to begin your call with Santa."
+      );
     });
   } else {
     // Fallback if video missing
@@ -172,11 +267,11 @@ document.addEventListener("DOMContentLoaded", () => {
     showStatus("success", "Tap Start to begin your call with Santa.");
   }
 
+
   // ------------------------------------------------------------
   // STEP 3 — Start Santa Call (after validation + video)
   // ------------------------------------------------------------
-  startBtn.addEventListener("click", () => {
-
+  startBtn.addEventListener("click", async () => {
     // Disable and hide the button immediately to prevent repeated clicks
     startBtn.disabled = true;
     startBtn.classList.add("locked");
@@ -187,11 +282,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (callContainer) {
       callContainer.hidden = false;
-      callContainer.innerHTML = "";  // We removed the redundant line
+      callContainer.innerHTML = ""; // clear in case of retries
       callContainer.scrollIntoView({ behavior: "smooth" });
     }
 
-    // TODO: Initialize ElevenLabs Avatar session here
-  });
+    // 3A — Notify Make that the call is starting (optional but recommended)
+    try {
+      await fetch("https://hook.us2.make.com/tf22v739bg7r7c07kubak5ik3qiyrf88", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, event: "start_call" }),
+      });
+    } catch (err) {
+      console.warn("Start-call webhook failed (non-blocking):", err);
+    }
 
+    // 3B — Inject ElevenLabs widget into the page
+    if (callContainer) {
+      callContainer.innerHTML = `
+        <elevenlabs-convai
+          agent-id="agent_6801kajjbdqxe03vwpes80erj84f"
+          style="width:100%;max-width:480px;margin:0 auto;"
+        ></elevenlabs-convai>
+      `;
+    }
+
+    // 3C — Load the ElevenLabs widget script once
+    if (!document.querySelector('script[data-elevenlabs-convai]')) {
+      const s = document.createElement("script");
+      s.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
+      s.async = true;
+      s.type = "text/javascript";
+      s.dataset.elevenlabsConvai = "1";
+      document.body.appendChild(s);
+    }
+  });
 });
