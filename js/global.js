@@ -62,80 +62,6 @@ function clearStatus() {
 }
 
 // ------------------------------------------------------------
-// Start Call webhook helper (Make: SMC Start Call)
-// ------------------------------------------------------------
-async function startSantaCallWithToken(token) {
-  try {
-    const res = await fetch(
-      "https://hook.us2.make.com/tf22v739bg7r7c07kubak5ik3qiyrf88",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token })
-      }
-    );
-
-    const data = await res.json();
-
-    if (!data || data.ok !== true) {
-      const reason = data && data.reason ? data.reason : "unknown_error";
-
-      if (reason === "invalid_or_used_token") {
-        showStatus(
-          "error",
-          "This magic link is invalid or has already been used. Please check your email for a fresh link."
-        );
-      } else {
-        showStatus(
-          "error",
-          "We couldn’t start the call. Please try again using the link from your email."
-        );
-      }
-      return false;
-    }
-
-    // Token successfully moved to in_progress
-    return true;
-  } catch (err) {
-    console.error("Start call webhook failed:", err);
-    showStatus(
-      "error",
-      "We couldn’t start the call right now. Please refresh the page and try again."
-    );
-    return false;
-  }
-}
-
-// ------------------------------------------------------------
-// Inject ElevenLabs widget into callContainer
-// ------------------------------------------------------------
-function injectSantaWidget(container) {
-  if (!container) return;
-
-  // Clear anything old in the call container
-  container.innerHTML = `
-    <section class="santa-call">
-      <h2 class="santa-call__title">Santa’s Magic Call</h2>
-      <p class="call-status">You’re now connected to Santa. 🎄</p>
-      <elevenlabs-convai
-        agent-id="agent_6801kajjbdqxe03vwpes80erj84f"
-        style="width:100%;max-width:480px;margin:0 auto;display:block;"
-      ></elevenlabs-convai>
-    </section>
-  `;
-
-  // Load the ElevenLabs widget script once
-  if (!document.getElementById("el-convai-script")) {
-    const script = document.createElement("script");
-    script.id = "el-convai-script";
-    script.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
-    script.async = true;
-    script.type = "text/javascript";
-    document.body.appendChild(script);
-  }
-}
-
-// ------------------------------------------------------------
 // DOMContentLoaded — Everything runs from here
 // ------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
@@ -170,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ------------------------------------------------------------
   // ORIENTATION PAGE — Token Validation + Video Gate
   // ------------------------------------------------------------
+
   const video = document.getElementById("orientationVideo");
   const startBtn = document.getElementById("startCallBtn");
   const callContainer = document.getElementById("callContainer");
@@ -177,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // If no start button → not this page
   if (!startBtn) return;
 
-  // Parse token
+  // Parse token from query string
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token");
 
@@ -194,8 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ------------------------------------------------------------
-  // STEP 1 — Validate token ON PAGE LOAD (validator scenario)
-// ------------------------------------------------------------
+  // STEP 1 — Validate token ON PAGE LOAD
+  // ------------------------------------------------------------
   async function validateToken() {
     showStatus("info", "Checking your magic link…");
 
@@ -205,13 +132,13 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token })
+          body: JSON.stringify({ token }),
         }
       );
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
-      if (!data.ok) {
+      if (!res.ok || !data.ok) {
         showStatus(
           "error",
           "This magic link is invalid or has already been used."
@@ -258,42 +185,89 @@ document.addEventListener("DOMContentLoaded", () => {
     startBtn.hidden = false;
     startBtn.disabled = false;
     startBtn.classList.remove("locked");
-    showStatus("success", "Tap Start to begin your call with Santa.");
+    showStatus(
+      "success",
+      "Tap Start to begin your call with Santa."
+    );
   }
 
   // ------------------------------------------------------------
   // STEP 3 — Start Santa Call (after validation + video)
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
+  // We’ll simply require a 200 OK from Make; we don’t rely on any
+  // particular JSON shape right now.
+  const START_CALL_WEBHOOK =
+    "https://hook.us2.make.com/tf22v739bg7r7c07kubak5ik3qiyrf88";
+
   startBtn.addEventListener("click", async () => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-
-    if (!token) {
-      showStatus(
-        "error",
-        "This magic link is missing a token. Please use the link from your email."
-      );
-      return;
-    }
-
-    // 1) Ask Make if we can start this call (and mark token in_progress)
-    const allowed = await startSantaCallWithToken(token);
-    if (!allowed) return; // bail if Make said no
-
-    // 2) UI behavior once we’re cleared to start
+    // Disable and hide the button immediately to prevent repeated clicks
     startBtn.disabled = true;
     startBtn.classList.add("locked");
     startBtn.style.display = "none";
 
     clearStatus();
-    showStatus("success", "Connecting you to Santa… ✨");
+    showStatus("info", "Connecting you to Santa… ✨");
 
-    if (callContainer) {
-      callContainer.hidden = false;
-      callContainer.scrollIntoView({ behavior: "smooth" });
+    let ok = false;
 
-      // 3) Inject the ElevenLabs widget into the call container
-      injectSantaWidget(callContainer);
+    try {
+      const res = await fetch(START_CALL_WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+
+      // If Make responds 2xx, we treat that as success
+      ok = res.ok;
+      // We *can* attempt to read JSON, but we don't depend on it yet
+      try {
+        await res.json();
+      } catch (_ignored) {}
+    } catch (err) {
+      console.error("Start call error:", err);
+      ok = false;
     }
+
+    if (!ok) {
+      // Put the button back so they can retry
+      startBtn.style.display = "block";
+      startBtn.disabled = false;
+      startBtn.classList.remove("locked");
+
+      showStatus(
+        "error",
+        "We couldn’t start the call right now. Please refresh the page and try again."
+      );
+      return;
+    }
+
+    // Success → show container and inject ElevenLabs widget
+    if (!callContainer) {
+      showStatus(
+        "error",
+        "We started the call but couldn’t show the call interface. Please refresh the page."
+      );
+      return;
+    }
+
+    callContainer.hidden = false;
+
+    // Inject the ElevenLabs Convai widget
+    callContainer.innerHTML = `
+      <elevenlabs-convai agent-id="agent_6801kajjbdqxe03vwpes80erj84f"></elevenlabs-convai>
+    `;
+
+    // Load the Convai script once per page
+    if (!window.__EL_CONVAI_WIDGET_LOADED__) {
+      window.__EL_CONVAI_WIDGET_LOADED__ = true;
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
+      script.async = true;
+      script.type = "text/javascript";
+      document.body.appendChild(script);
+    }
+
+    callContainer.scrollIntoView({ behavior: "smooth" });
+    showStatus("success", "You’re connected to Santa! 🎄");
   });
 });
